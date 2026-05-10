@@ -71,48 +71,35 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install build twine
 
-      - name: Stage source tree
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/semiliterate-release
-          rsync -a --delete \
-            --exclude '.git/' \
-            --exclude '.pytest_cache/' \
-            --exclude '__pycache__/' \
-            ./ /tmp/semiliterate-release/
-
-      - name: Bump staged version
+      - name: Bump version
         shell: bash
         env:
           RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          bash /tmp/semiliterate-release/.github/bump.sh \
+          bash .github/bump.sh \
             --version "$RELEASE_VERSION" \
-            --pyproject-file /tmp/semiliterate-release/pyproject.toml
+            --pyproject-file pyproject.toml
 
-      - name: Verify staged version
+      - name: Verify version
         shell: bash
         env:
           RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          grep "^version = \"$RELEASE_VERSION\"$" /tmp/semiliterate-release/pyproject.toml
-          grep '^version = "0.0.0"$' pyproject.toml
+          grep "^version = \"$RELEASE_VERSION\"$" pyproject.toml
 
       - name: Build distributions
-        working-directory: /tmp/semiliterate-release
         run: python -m build
 
       - name: Validate distributions
-        run: python -m twine check /tmp/semiliterate-release/dist/*
+        run: python -m twine check dist/*
 
       - name: Upload distribution artifacts
         uses: actions/upload-artifact@v4
         with:
           name: python-dist
-          path: /tmp/semiliterate-release/dist/*
+          path: dist/*
           if-no-files-found: error
           retention-days: 7
 
@@ -132,7 +119,6 @@ jobs:
         with:
           tag_name: ${{ needs.build.outputs.release_tag }}
           name: ${{ needs.build.outputs.release_name }}
-          generate_release_notes: ${{ github.event_name != 'release' }}
           files: |
             dist/*
 
@@ -141,7 +127,7 @@ jobs:
     needs: build
     if: ${{ github.event_name == 'release' || !inputs.dry-run }}
     environment:
-      name: release
+      name: pypi
       url: https://pypi.org/p/semiliterate
     permissions:
       id-token: write
