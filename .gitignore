@@ -1,0 +1,13 @@
+site/
+*.egg-info/
+__pycache__/
+*.pyc
+build/
+dist/
+.vscode/.ropeproject/
+.cache/
+venv/
+.venv/
+.build-docs/
+artifact.tar
+.env
