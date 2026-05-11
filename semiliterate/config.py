@@ -7,12 +7,31 @@ from typing import Any, Dict, Optional
 
 import yaml
 
-MARKDOWN_INCLUDE = [
+MARKDOWN_FILES = [
     ".markdown",
     ".mdown",
     ".mkdn",
     ".mkd",
     ".md",
+]
+
+IMAGE_FILES = [
+    "*.bmp",
+    "*.tif",
+    "*.tiff",
+    "*.gif",
+    "*.svg",
+    "*.jpeg",
+    "*.jpg",
+    "*.jif",
+    "*.jiff",
+    "*.jp2",
+    "*.jpx",
+    "*.j2k",
+    "*.j2c",
+    "*.fpx",
+    "*.pcd",
+    "*.png",
 ]
 
 DEFAULT_CONFIG = {
@@ -24,34 +43,16 @@ DEFAULT_CONFIG = {
         "venv/**",
         ".**/**",
     ],
-    "include": MARKDOWN_INCLUDE + [
-        "*.bmp",
-        "*.tif",
-        "*.tiff",
-        "*.gif",
-        "*.svg",
-        "*.jpeg",
-        "*.jpg",
-        "*.jif",
-        "*.jiff",
-        "*.jp2",
-        "*.jpx",
-        "*.j2k",
-        "*.j2c",
-        "*.fpx",
-        "*.pcd",
-        "*.png",
+    "include": MARKDOWN_FILES + IMAGE+FILES + [
         "*.pdf",
         "CNAME",
         "*.snippet",
         ".pages",
+        ".nav.yml"
     ],
     "ignore_hidden": True,
     "copy": False,
     "semiliterate": [
-        {
-            "pattern": r"^LICENSE$",
-        },
         {
             "pattern": r".*",
             "terminate": r"^\W*md-ignore",
