@@ -43,7 +43,7 @@ DEFAULT_CONFIG = {
         "venv/**",
         ".**/**",
     ],
-    "include": MARKDOWN_FILES + IMAGE+FILES + [
+    "include": MARKDOWN_FILES + IMAGE_FILES + [
         "*.pdf",
         "CNAME",
         "*.snippet",
