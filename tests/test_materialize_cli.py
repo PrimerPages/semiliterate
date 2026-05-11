@@ -51,12 +51,12 @@ def test_build_docs_dry_run(tmp_path):
     source_dir = tmp_path / "project"
     output_dir = tmp_path / "build"
     source_dir.mkdir()
-    (source_dir / "LICENSE").write_text("hello", encoding="utf-8")
+    (source_dir / "module.py").write_text('"""md\n# Title\n"""\n', encoding="utf-8")
 
     paths = build_docs(source=str(source_dir), out=str(output_dir), dry_run=True)
 
     assert len(paths) == 1
-    assert not (output_dir / "LICENSE.md").exists()
+    assert not (output_dir / "module.md").exists()
 
 
 def test_cli_build(tmp_path):
