@@ -1,11 +1,12 @@
 """Tests for config loading, materialization, and CLI."""
 
+import os
 from pathlib import Path
 
 import yaml
 
 from semiliterate.cli import main
-from semiliterate.config import load_config
+from semiliterate.config import DEFAULT_CONFIG, load_config
 from semiliterate.materialize import build_docs
 
 
@@ -30,6 +31,26 @@ def test_load_config_yaml_override(tmp_path):
     assert "semiliterate" in config
 
 
+def test_load_config_merges_include_extra_and_ignore_extra(tmp_path):
+    config_path = tmp_path / "semiliterate.yml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "include_extra": ["*.csv", "*.png"],
+                "ignore_extra": ["_build/**"],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    config = load_config(str(config_path))
+
+    assert config["include"] == DEFAULT_CONFIG["include"] + ["*.csv"]
+    assert config["ignore"] == DEFAULT_CONFIG["ignore"] + ["_build/**"]
+    assert "include_extra" not in config
+    assert "ignore_extra" not in config
+
+
 def test_build_docs_materializes_included_files(tmp_path):
     source_dir = tmp_path / "project"
     output_dir = tmp_path / "build"
@@ -45,6 +66,24 @@ def test_build_docs_materializes_included_files(tmp_path):
 
     assert len(paths) == 1
     assert (output_dir / "docs" / "index.md").read_text(encoding="utf-8") == "# Hello\n"
+
+
+def test_build_docs_accepts_include_extra_in_config(tmp_path):
+    source_dir = tmp_path / "project"
+    output_dir = tmp_path / "build"
+    docs_dir = source_dir / "docs"
+    docs_dir.mkdir(parents=True)
+    (docs_dir / "notes.txt").write_text("plain text", encoding="utf-8")
+
+    paths = build_docs(
+        source=str(source_dir),
+        out=str(output_dir),
+        config={"folders": ["docs"], "include_extra": ["*.txt"], "ignore": [], "semiliterate": []},
+    )
+
+    assert len(paths) == 1
+    assert paths[0].output_relpath == os.path.join("docs", "notes.txt")
+    assert (output_dir / "docs" / "notes.txt").read_text(encoding="utf-8") == "plain text"
 
 
 def test_build_docs_dry_run(tmp_path):
@@ -84,8 +123,8 @@ def test_cli_build_with_config(tmp_path):
             {
                 "folders": ["src"],
                 "ignore": [],
-                "include": [],
-                "semiliterate": [{"pattern": r".*\.txt"}],
+                "include_extra": ["*.txt"],
+                "semiliterate": [],
             }
         ),
         encoding="utf-8",
@@ -104,7 +143,7 @@ def test_cli_build_with_config(tmp_path):
     )
 
     assert exit_code == 0
-    assert (output_dir / "src" / "notes.md").read_text(encoding="utf-8") == "plain text\n"
+    assert (output_dir / "src" / "notes.txt").read_text(encoding="utf-8") == "plain text"
 
 
 def test_build_docs_ignores_output_inside_source(tmp_path):

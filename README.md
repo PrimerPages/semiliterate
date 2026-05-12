@@ -51,6 +51,19 @@ semiliterate:
         stop: "^\\s*\"\"\"\\s*$"
 ```
 
+If you want to keep the built-in defaults and add a few more file types,
+use `include_extra` and `ignore_extra`:
+
+```yaml
+include_extra:
+  - "*.csv"
+  - "*.webp"
+ignore_extra:
+  - "_build/**"
+```
+
+`include` and `ignore` still replace the defaults if you set them directly.
+
 ## Python API
 
 ```python

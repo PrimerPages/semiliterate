@@ -7,7 +7,7 @@ from pathlib import Path
 import shutil
 from typing import Dict, List, Optional
 
-from semiliterate.config import load_config
+from semiliterate.config import load_config, normalize_config
 from semiliterate.scanner import BuildPath, SimpleScanner
 
 
@@ -52,6 +52,7 @@ def build_docs(
     loaded_config = load_config(config_path)
     if config:
         loaded_config.update(config)
+    loaded_config = normalize_config(loaded_config)
 
     source_root = Path(source).resolve()
     output_root = Path(out).resolve()

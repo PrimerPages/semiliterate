@@ -34,6 +34,13 @@ IMAGE_FILES = [
     "*.png",
 ]
 
+HTML_FILES = [
+    "*.html",
+    "*.htm",
+    "*.xhtml",
+    "*.js"
+]
+
 DEFAULT_CONFIG = {
     "folders": ["*"],
     "ignore": [
@@ -43,13 +50,7 @@ DEFAULT_CONFIG = {
         "venv/**",
         ".**/**",
     ],
-    "include": MARKDOWN_FILES + IMAGE_FILES + [
-        "*.pdf",
-        "CNAME",
-        "*.snippet",
-        ".pages",
-        ".nav.yml"
-    ],
+    "include": MARKDOWN_FILES + IMAGE_FILES + HTML_FILES,
     "ignore_hidden": True,
     "copy": False,
     "semiliterate": [
@@ -90,6 +91,37 @@ def default_config() -> Dict[str, Any]:
     return copy.deepcopy(DEFAULT_CONFIG)
 
 
+def _as_list(value: Optional[Any]) -> list:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return list(value)
+    if isinstance(value, tuple):
+        return list(value)
+    return [value]
+
+
+def _merge_unique(base: list, extra: list) -> list:
+    merged = list(base)
+    for item in extra:
+        if item not in merged:
+            merged.append(item)
+    return merged
+
+
+def normalize_config(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Apply derived config defaults and merge list extras."""
+    normalized = copy.deepcopy(config)
+    include = _as_list(normalized.get("include", []))
+    ignore = _as_list(normalized.get("ignore", []))
+    include_extra = _as_list(normalized.pop("include_extra", []))
+    ignore_extra = _as_list(normalized.pop("ignore_extra", []))
+
+    normalized["include"] = _merge_unique(include, include_extra)
+    normalized["ignore"] = _merge_unique(ignore, ignore_extra)
+    return normalized
+
+
 def load_config(config_path: Optional[str] = None) -> Dict[str, Any]:
     """Load configuration from YAML and merge with defaults."""
     config = default_config()
@@ -101,4 +133,4 @@ def load_config(config_path: Optional[str] = None) -> Dict[str, Any]:
 
     for key, value in loaded.items():
         config[key] = value
-    return config
+    return normalize_config(config)
