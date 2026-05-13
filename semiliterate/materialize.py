@@ -2,6 +2,20 @@
 
 from __future__ import annotations
 
+"""md
+# Materialization
+
+`build_docs` is the top-level orchestration function for the standalone
+package. It loads config, scans the source tree, and materializes included
+files into the output directory.
+
+## Responsibilities
+
+- combine explicit config with defaults
+- exclude the output directory from future scans
+- copy, symlink, or skip included files based on `include_mode`
+"""
+
 import os
 from pathlib import Path
 import shutil

@@ -1,0 +1,84 @@
+name: Site
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-site:
+    runs-on: ubuntu-latest
+    outputs:
+      host: ${{ steps.pages.outputs.host }}
+      base-path: ${{ steps.pages.outputs.base_path }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build semiliterate docs
+        id: semiliterate
+        uses: ./
+        with:
+          source: .
+          out: .build-docs
+          config: .github/semiliterate.yml
+
+      - name: Show generated files
+        shell: bash
+        run: find "${{ steps.semiliterate.outputs.out }}" -type f | sort
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.4
+          working-directory: ${{ steps.semiliterate.outputs.out }}
+          bundler-cache: true
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v3
+        with:
+          token: ${{ github.token }}
+
+      - name: Build jekyll site
+        shell: bash
+        working-directory: ${{ steps.semiliterate.outputs.out }}
+        run: bundle exec jekyll build
+
+      - name: Debug output
+        run: |
+          tree ${{ steps.semiliterate.outputs.out }}
+          cat "${{ steps.semiliterate.outputs.out }}/_site/index.html"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          name: github-pages
+          path: ${{ steps.semiliterate.outputs.out }}/_site
+
+  test-site:
+    needs: build-site
+    permissions:
+      contents: read
+    uses: athackst/ci/.github/workflows/htmlproofer_site.yml@main
+    with:
+      host: ${{ needs.build-site.outputs.host }}
+      base-path: ${{ needs.build-site.outputs.base-path }}
+      artifact-name: github-pages
+
+  deploy-site:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-site
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

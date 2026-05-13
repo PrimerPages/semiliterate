@@ -1,0 +1,13 @@
+ignore:
+  - ".**/**"
+  - "node_modules/**"
+  - "_site/**"
+  - "vendor/**"
+  - "**/__pycache__/**"
+  - "venv/**"
+
+include_extra:
+  - "_config.yml"
+  - ".nav.yml"
+  - "Gemfile"
+  - "assets/**"

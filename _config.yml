@@ -1,0 +1,60 @@
+theme: jekyll-theme-profile
+title: Semiliterate
+description: A tool for extracting documentation from source code
+image: 
+edit_url: https://www.github.com/PrimerPages/semiliterate/blob/main/
+repository: PrimerPages/semiliterate
+
+permalink: pretty
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "docs"
+      toc: true
+      index: "/"
+
+style: appbar # One of "stacked", "sidebar", "topbar", "appbar"
+
+repo_info: true # Show the information for the source of this project
+user_metadata: true # Show the metadata associated with the user
+profile_link: true # Show a link to the github profile for the user
+
+########################## PLUGIN SETTINGS ##########################
+plugins:
+  - jekyll-awesome-nav
+  - jekyll-gfm-admonitions
+  - jekyll-octicons
+  - jekyll-optional-front-matter
+  - jekyll-readme-index
+  - jekyll-relative-links
+  - jekyll-seo-tag
+  - jekyll-toc
+  - jemoji
+
+awesome_nav:
+  enabled: true
+  root: ""
+  nav_filename: .nav.yml
+
+optional_front_matter:
+  remove_originals: true
+
+readme_index:
+  remove_originals: true
+
+toc:
+  max_level: 2
+
+relative_links:
+  enabled:     true
+  collections: true
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+  - _site/
+  - .venv/

@@ -2,6 +2,22 @@
 
 from __future__ import annotations
 
+"""md
+# CLI
+
+The command line entrypoint currently exposes a single `build` command for
+scanning a source tree and writing extracted documentation to an output
+directory.
+
+## Supported flags
+
+- `--source`: source root to scan
+- `--out`: destination directory for generated files
+- `--config`: optional YAML config path
+- `--include-mode`: choose `copy`, `symlink`, or `skip` for included files
+- `--dry-run`: report paths without writing files
+"""
+
 import argparse
 import logging
 from typing import Optional

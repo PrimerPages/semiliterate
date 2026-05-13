@@ -2,6 +2,19 @@
 
 from __future__ import annotations
 
+"""md
+# Extraction Engine
+
+The extractor module is responsible for recognizing semiliterate markers in
+source files and writing matching content into markdown outputs.
+
+## Main types
+
+- `ExtractionPattern`: compiled start, stop, and replacement rules
+- `StreamExtract`: stateful line-by-line extractor for one input stream
+- `Semiliterate`: configured wrapper that applies patterns to matching files
+"""
+
 from dataclasses import dataclass, field
 from io import TextIOWrapper
 import logging
