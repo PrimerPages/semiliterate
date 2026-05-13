@@ -8,6 +8,9 @@ dist/
 .cache/
 venv/
 .venv/
-.build-docs/
 artifact.tar
 .env
+.build-docs/
+.pytest_cache/
+.codex/
+.agents/

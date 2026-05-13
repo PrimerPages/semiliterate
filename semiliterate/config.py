@@ -2,6 +2,19 @@
 
 from __future__ import annotations
 
+"""md
+# Configuration
+
+This module defines the built-in semiliterate defaults and the helpers that
+load user YAML into the normalized runtime configuration.
+
+## Notes
+
+- `DEFAULT_CONFIG` keeps the extractor patterns and default include rules
+- `load_config` overlays YAML values onto the defaults
+- `normalize_config` merges `include_extra` and `ignore_extra`
+"""
+
 import copy
 from typing import Any, Dict, Optional
 

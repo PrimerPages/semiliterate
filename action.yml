@@ -1,0 +1,72 @@
+name: semiliterate
+description: Build semiliterate documentation from a source tree.
+author: Allison Thackston
+
+inputs:
+  source:
+    description: Source tree root to scan.
+    required: false
+    default: .
+  out:
+    description: Output directory for generated files.
+    required: false
+    default: .build-docs
+  config:
+    description: Optional YAML config file path.
+    required: false
+    default: ""
+  include-mode:
+    description: How included files are materialized.
+    required: false
+    default: copy
+  dry-run:
+    description: Scan and report without writing files.
+    required: false
+    default: "false"
+  verbose:
+    description: Enable info logging.
+    required: false
+    default: "false"
+  python-version:
+    description: Python version to use for the action runner.
+    required: false
+    default: "3.11"
+
+outputs:
+  out:
+    description: Output directory for generated files.
+    value: ${{ inputs.out }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install semiliterate
+      shell: bash
+      run: python -m pip install --upgrade pip && python -m pip install "$GITHUB_ACTION_PATH"
+
+    - name: Run semiliterate
+      shell: bash
+      env:
+        INPUT_SOURCE: ${{ inputs.source }}
+        INPUT_OUT: ${{ inputs.out }}
+        INPUT_CONFIG: ${{ inputs.config }}
+        INPUT_INCLUDE_MODE: ${{ inputs.include-mode }}
+        INPUT_DRY_RUN: ${{ inputs.dry-run }}
+        INPUT_VERBOSE: ${{ inputs.verbose }}
+      run: |
+        args=(build --source "$INPUT_SOURCE" --out "$INPUT_OUT" --include-mode "$INPUT_INCLUDE_MODE")
+        if [[ -n "$INPUT_CONFIG" ]]; then
+          args+=(--config "$INPUT_CONFIG")
+        fi
+        if [[ "$INPUT_DRY_RUN" == "true" ]]; then
+          args+=(--dry-run)
+        fi
+        if [[ "$INPUT_VERBOSE" == "true" ]]; then
+          args+=(--verbose)
+        fi
+        semiliterate "${args[@]}"

@@ -2,6 +2,19 @@
 
 from __future__ import annotations
 
+"""md
+# Scanner
+
+The scanner walks the source tree, filters ignored paths, forwards extractable
+files to semiliterate rules, and tracks the output paths produced by a build.
+
+## Main types
+
+- `BuildPath`: records the source file and generated destination path
+- `SimpleScanner`: scans folders, applies ignore rules, and dispatches
+  extraction
+"""
+
 from dataclasses import dataclass
 import fnmatch
 import os
