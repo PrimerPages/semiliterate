@@ -48,7 +48,7 @@ jobs:
       - name: Build jekyll site
         shell: bash
         working-directory: ${{ steps.semiliterate.outputs.out }}
-        run: bundle exec jekyll build
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
 
       - name: Debug output
         run: |
