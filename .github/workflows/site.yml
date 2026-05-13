@@ -52,7 +52,7 @@ jobs:
 
       - name: Debug output
         run: |
-          tree ${{ steps.semiliterate.outputs.out }}
+          tree ${{ steps.semiliterate.outputs.out }}/_site
           cat "${{ steps.semiliterate.outputs.out }}/_site/index.html"
 
       - name: Upload artifact
