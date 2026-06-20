@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "install semiliterate",
+            "type": "shell",
+            "command": "pipx install -f . "
+        },
+        {
+            "label": "prepare site",
+            "type": "shell",
+            "command": "semiliterate build --config .github/semiliterate.yml",
+            "dependsOn": "install semiliterate"
+        },
+        {
+            "label": "build site",
+            "type": "shell",
+            "dependsOn": "prepare site",
+            "command": "bundle install && bundle update && bundle exec jekyll build",
+            "options": {
+                "cwd": ".build-docs"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "serve site",
+            "type": "shell",
+            "dependsOn": "prepare site",
+            "command": "bundle install && bundle update && bundle exec jekyll serve",
+            "options": {
+                "cwd": ".build-docs"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Test",
+            "type": "shell",
+            "command": "pytest -q",
+            "problemMatcher": []
+        }
+    ]
+}
