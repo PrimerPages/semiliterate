@@ -33,7 +33,7 @@ jobs:
         run: find "${{ steps.semiliterate.outputs.out }}" -type f | sort
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.314.0
+        uses: ruby/setup-ruby@v1.316.0
         with:
           ruby-version: 3.3.4
           working-directory: ${{ steps.semiliterate.outputs.out }}
