@@ -115,7 +115,7 @@ jobs:
           path: dist
 
       - name: Publish artifacts to GitHub release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v3.0.1
         with:
           tag_name: ${{ needs.build.outputs.release_tag }}
           name: ${{ needs.build.outputs.release_name }}
