@@ -87,8 +87,17 @@ jobs:
         run: python -m build
 
   success:
+    if: ${{ always() }}
     needs: [test, action, build]
     runs-on: ubuntu-latest
     steps:
-      - name: Success
-        run: echo "All tests passed and build succeeded!"
+      - name: Check required job results
+        env:
+          NEEDS_RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS_RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          if ! echo "$NEEDS_RESULTS" | jq -e 'all(.[]; .result == "success")' > /dev/null; then
+            echo "::error::All required jobs must succeed. A job failed, was cancelled, or was skipped."
+            exit 1
+          fi
+          echo "All required jobs passed!"
